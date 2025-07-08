@@ -13,14 +13,12 @@ const productsInCart = [
 ]
 
 interface Props {
-  params: {
-    id: string
-  }
+  params: Promise<{ id: string }>
 }
 
-export default function( {params}: Props ) {
+export default async function( {params}: Props ) {
 
-  const {id} = params;
+  const {id} = await params;
 
   return (
     <div className='flex justify-center items-center mb-72 px-10 sm:px-0'>

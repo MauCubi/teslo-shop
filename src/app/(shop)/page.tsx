@@ -1,3 +1,5 @@
+export const revalidate = 60;
+
 import { Title } from '@/components/ui/title/Title';
 import { titleFont } from '../config/fonts';
 import { ProductGrid } from '@/components/products/products-grid/ProductGrid';
@@ -7,9 +9,7 @@ import { Pagination } from '@/components/ui/pagination/pagination';
 
 
 interface Props {
-  searchParams: {
-    page?: string;
-  }
+  searchParams: Promise<{ page?: string }>  
 }
 
 export default async function Home({ searchParams }: Props) {

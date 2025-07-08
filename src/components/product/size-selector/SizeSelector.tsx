@@ -2,11 +2,12 @@ import clsx from 'clsx';
 import { ValidSizes } from '../../../app/interfaces/product-interface';
 
 interface Props {
-    selectedSize: ValidSizes;
+    selectedSize?: ValidSizes;
     availableSizes: ValidSizes[];
+    onSelectedSize: ( size: ValidSizes ) => void;
 }
 
-export const SizeSelector = ({selectedSize, availableSizes}: Props) => {
+export const SizeSelector = ({selectedSize, availableSizes, onSelectedSize}: Props) => {
 
 
 
@@ -18,7 +19,8 @@ export const SizeSelector = ({selectedSize, availableSizes}: Props) => {
             {
                 availableSizes.map( size => (
                     <button
-                        key={size} 
+                        key={size}
+                        onClick={ () => onSelectedSize(size) } 
                         className={
                             clsx(
                                 'mx-2 hover:underline cursor-pointer text-lg',

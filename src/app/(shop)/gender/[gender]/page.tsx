@@ -1,3 +1,6 @@
+export const revalidate = 60;
+
+
 import { getPaginatedProductsWithImages } from '@/actions/product/product-pagination';
 import { ProductGrid } from '@/components/products/products-grid/ProductGrid';
 import { Title } from '@/components/ui/title/Title';
@@ -8,12 +11,8 @@ import { Pagination } from '@/components/ui/pagination/pagination';
 
 
 interface Props {
-  params: {
-    gender: Gender,
-  },
-  searchParams: {    
-    page?: string;
-  }
+  params: Promise<{ gender: Gender }>  
+  searchParams: Promise<{ page?: string }>
 }
 
 
@@ -24,11 +23,11 @@ export default async function({searchParams, params}: Props) {
 
   const page = sParams.page ? parseInt( sParams.page ) : 1;  
 
+  // console.log(gender, page)
+
   // const products = initialData.products.filter( product => product.gender === id);
 
   const { products, currentPage, totalPages } = await getPaginatedProductsWithImages({page , gender});
-
-  
   
   const categoria = gender === 'men' ? 'hombres' : gender === 'women' ? 'mujeres' : 'niños';
 

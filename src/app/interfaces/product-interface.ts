@@ -1,6 +1,6 @@
 
 export interface Product {
-    id: string
+    id: string;
     description: string;
     images: string[];
     inStock: number;
@@ -11,6 +11,17 @@ export interface Product {
     title: string;
     // type: ValidTypes;
     gender: 'men'|'women'|'kid'|'unisex'
+}
+
+export interface CartProduct {
+    id: string;
+    slug: string;
+    title: string;
+    price: number;
+    quantity: number;
+    size: ValidSizes;
+    image: string;
+
 }
 
 export type ValidSizes = 'XS'|'S'|'M'|'L'|'XL'|'XXL'|'XXXL';
