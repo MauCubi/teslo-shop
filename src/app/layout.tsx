@@ -1,16 +1,14 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from 'next';
+import './globals.css';
 import { inter } from './config/fonts';
-
-
-
+import { Provider } from '@/components/providers/Provider';
 
 export const metadata: Metadata = {
   title: {
     template: '%s - Teslo | Shop',
-    default: 'Home - Teslo | Shop'
+    default: 'Home - Teslo | Shop',
   },
-  description: "Una tienda virtual de productos",
+  description: 'Una tienda virtual de productos',
 };
 
 export default function RootLayout({
@@ -19,12 +17,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${inter.className} antialiased`}
-      >
-        
-        {children}
+    <html lang='en'>
+      <body className={`${inter.className} antialiased`}>
+        <Provider>{children}</Provider>
       </body>
     </html>
   );
