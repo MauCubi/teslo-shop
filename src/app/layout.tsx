@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { inter } from './config/fonts';
-import { Provider } from '@/components/providers/Provider';
+import { Providers } from '@/components/providers/Providers';
 
 export const metadata: Metadata = {
   title: {
@@ -11,6 +11,8 @@ export const metadata: Metadata = {
   description: 'Una tienda virtual de productos',
 };
 
+
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -19,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={`${inter.className} antialiased`}>
-        <Provider>{children}</Provider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

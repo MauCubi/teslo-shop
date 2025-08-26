@@ -10,41 +10,52 @@ import { useShallow } from 'zustand/shallow';
 import { currencyFormat } from '@/utils/currencyFormat';
 import clsx from 'clsx';
 import { placeOrder } from '@/actions/order/place-order';
+import { useRouter } from 'next/navigation';
+
+
+
 
 export const PlaceOrder = () => {
   const { subTotal, total, tax, itemsInCart } = useCartStore(
     useShallow((state) => state.getSummaryInfo())
   );
 
-  const [loaded, setLoaded] = useState(false);
+  const router = useRouter();
 
+  const [loaded, setLoaded] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [placingOrder, setPlacingOrder] = useState(false);
 
-  const address = useAddressStore((state) => state.address);
 
-  const cart = useCartStore((state) => state.cart)
+  const address = useAddressStore((state) => state.address);
+  const cart = useCartStore((state) => state.cart);
+  const clearCart = useCartStore((state) => state.clearCart);
+
 
   useEffect(() => {
     setLoaded(true);
   }, []);
 
   const onPlaceOrder = async () => {
-
-    const productsInOrder = cart.map( prod => ({
+    const productsInOrder = cart.map((prod) => ({
       productId: prod.id,
       quantity: prod.quantity,
       size: prod.size,
-    })) 
+    }));
 
-    setPlacingOrder(true);
+    const resp = await placeOrder(productsInOrder, address);
 
-    // console.log({address, productsInOrder})
+    if (!resp.ok) {
+      setPlacingOrder(false);
+      setErrorMessage(resp.message)
+      return;
+    }
 
-    const resp = await placeOrder(productsInOrder, address)
-    // console.log({resp})
+    clearCart();
+    router.replace('/orders/' + resp.order?.id)
 
 
-    setPlacingOrder(false);
+
   };
 
   if (!loaded) {
@@ -113,16 +124,14 @@ export const PlaceOrder = () => {
             )}
 
             <div className='mb-5 mt-5 w-full'>
-
-              {/* <p>Error de creacion</p> */}
+             
+              <p className='text-red-500'>{errorMessage}</p>
 
               <button
-                onClick={ onPlaceOrder }
-                className={
-                  clsx({
-                    'btn-primary': !placingOrder
-                  })
-                }
+                onClick={onPlaceOrder}
+                className={clsx({
+                  'btn-primary': !placingOrder,
+                })}
                 // href='/orders/123'
               >
                 Colocar orden

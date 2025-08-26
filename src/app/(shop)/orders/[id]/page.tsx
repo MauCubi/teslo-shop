@@ -1,142 +1,122 @@
+import { getOrderById } from '@/actions/order/get-order-by-id';
+import { OrderStatus } from '@/components/orders/OrderStatus';
+import { PayPalButton } from '@/components/paypal/PayPalButton';
 import { Title } from '@/components/ui/title/Title';
-import { initialData } from '@/seed/seed';
-import clsx from 'clsx';
+import { currencyFormat } from '@/utils/currencyFormat';
 import Image from 'next/image';
-import Link from 'next/link';
-import { IoCartOutline } from 'react-icons/io5';
-
-
-const productsInCart = [
-  initialData.products[0],
-  initialData.products[1],
-  initialData.products[2],  
-]
+import { notFound } from 'next/navigation';
 
 interface Props {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }
 
-export default async function( {params}: Props ) {
 
-  const {id} = await params;
+
+export default async function ({ params }: Props) {
+  const { id } = await params;
+
+  const { ok, orderById} = await getOrderById(id);  
+
+  if (!ok || !orderById) {
+    notFound()
+  }
 
   return (
     <div className='flex justify-center items-center mb-72 px-10 sm:px-0'>
-
       <div className='flex flex-col  w-[1000px] '>
-        
-        <Title title={`Orden #${id}`}/>
+        <Title title={`Orden #${id.split('-').at(-1)}`} />
 
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-10'>
-
           {/* Carrito */}
           <div className='flex flex-col mt-5 '>
-
-            <div className={
-              clsx(
-                'flex items-center rounded-lg py-2 px-3.5 text-xs font-bold text-white mb-5',
-                {
-                  'bg-red-500': false,
-                  'bg-green-700': true,
-                }
-              )}
-            >
-              <IoCartOutline size={30}/>
-              <span className='mx-2'>Pagada</span>
-            </div>
-
-
+            <OrderStatus isPaid={orderById.isPaid}/>
 
             {/* Items */}
-            {
-            productsInCart.map( prod => (
-              
-              <div key={prod.slug} className='flex mb-5'>
-                <Image 
-                  src={`/products/${prod.images[0]}`}
+            {orderById?.OrderItem?.map((prod) => (
+              <div key={`${prod.product.slug}-${prod.size}`} className='flex mb-5'>
+                <Image
+                  src={`/products/${prod.product.ProductImage[0].url}`}
                   width={100}
                   height={100}
                   style={{
                     width: '100px',
-                    height: '100px'
+                    height: '100px',
                   }}
-                  alt={prod.title}
+                  alt={prod.product.title}
                   className='mr-5 rounded'
-                />  
+                />
 
                 <div>
-                  <p>{prod.title}</p>
-                  <p>${prod.price} x 3</p>
-                  <p className='font-bold'>Subtotal: ${ prod.price * 3}</p>
+                  <p>{prod.product.title}</p>
+                  <p>
+                    ${prod.price} x {prod.quantity}
+                  </p>
+                  <p className='font-bold'>
+                    Subtotal: ${prod.price * prod.quantity}
+                  </p>
                 </div>
-
               </div>
-
-            ))
-          }
-
+            ))}
           </div>
-
-
 
           {/* checkout */}
           <div className='bg-white rounded-xl shadow-lg p-7'>
-
             <h2 className='text-2xl font-bold mb-2'>Direccion de entrega</h2>
             <div className='mb-10'>
-              <p className='text-xl'>Fernando Herrera</p>
-              <p>Av. Siempre viva 123</p>
-              <p>Col. Centro</p>
-              <p>Alcaldia quahatemoc</p>
-              <p>Ciudad de Mexico</p>
-              <p>CP 123123123</p>
-              <p>123123123</p>
+              <p className='text-xl'>
+                {orderById?.OrderAddress?.firstName}{' '}
+                {orderById?.OrderAddress?.lastName}
+              </p>
+              <p>{orderById?.OrderAddress?.address}</p>
+              <p>{orderById?.OrderAddress?.address2}</p>
+              <p>{orderById?.OrderAddress?.postalCode}</p>
+              <p>
+                {orderById?.OrderAddress?.city},{' '}
+                {orderById?.OrderAddress?.country.name}
+              </p>
+              <p>{orderById?.OrderAddress?.phone}</p>
             </div>
 
             {/* Divider */}
-            <div className='w-full h-0.5 rounded bg-gray-200 mb-10'/>
+            <div className='w-full h-0.5 rounded bg-gray-200 mb-10' />
 
             <h2 className='text-2xl mb-2'>Resumen de la orden</h2>
 
             <div className='grid grid-cols-2'>
-
               <span>No. Productos</span>
-              <span className='text-right'>3 Articulos</span>
+              <span className='text-right'>
+                {orderById?.itemsInOrder} articulos
+              </span>
 
               <span>Subtotal</span>
-              <span className='text-right'>$ 100</span>
+              <span className='text-right'>
+                {currencyFormat(orderById?.subTotal as number)}
+              </span>
 
               <span>Inpuestos (15%)</span>
-              <span className='text-right'>$ 100</span>
+              <span className='text-right'>
+                {currencyFormat(orderById?.tax as number)}
+              </span>
 
               <span className='mt-5 text-2xl'>Total</span>
-              <span className='mt-5 text-right text-2xl'>$ 100</span>
-
+              <span className='mt-5 text-right text-2xl'>
+                {currencyFormat(orderById?.total as number)}
+              </span>
             </div>
 
-            <div className='mb-5 mt-5 w-full'>           
+            {
+
+              orderById.isPaid  
+              ? <OrderStatus isPaid={orderById.isPaid}/>
+              : <PayPalButton amount={orderById.total} orderId={orderById.id}/>
               
-              <div className={
-                clsx(
-                  'flex items-center rounded-lg py-2 px-3.5 text-xs font-bold text-white mb-5',
-                  {
-                    'bg-red-500': false,
-                    'bg-green-700': true,
-                  }
-                )}
-              >
-                <IoCartOutline size={30}/>
-                <span className='mx-2'>Pagada</span>
-              </div>   
 
-            </div>
+            }           
+
 
           </div>
-
         </div>
-        
       </div>
-
     </div>
   );
 }

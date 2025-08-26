@@ -81,28 +81,32 @@ model Country {
 }
 
 model Order {
-  id           String   @id @default(uuid())
+  id           String    @id @default(uuid())
   subTotal     Float
   tax          Float
   total        Float
   itemsInOrder Int
-  isPaid       Boolean
-  paidAt       DateTime
+  isPaid       Boolean   @default(false)
+  paidAt       DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // Relaciones
-  user         User           @relation(fields: [userId], references: [id])
-  userId       String
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
   OrderItem    OrderItem[]
   OrderAddress OrderAddress?
+
+  transactionId String?
 }
 
 model OrderItem {
   id       String @id @default(uuid())
   quantity Int
   price    Float
+  size     Size
 
   // Relaciones
   order   Order  @relation(fields: [orderId], references: [id])

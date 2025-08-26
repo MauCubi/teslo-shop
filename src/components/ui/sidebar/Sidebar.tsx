@@ -25,7 +25,7 @@ export const Sidebar = () => {
   console.log({ session });
 
   return (
-    <div>
+    <div className='z-50'>
       {isSideMenuOpen && (
         <div className='fixed top-0 left-0 w-screen h-screen z-10 bg-black/30' />
       )}
@@ -68,8 +68,9 @@ export const Sidebar = () => {
         </Link>
 
         <Link
-          href='/'
+          href='/orders'
           className='flex items-center mt-5 p-2 hover:bg-gray-100 rounded transition-all'
+          onClick={() => closeSideMenu()}
         >
           <IoTicketOutline size={30} />
           <span className='ml-3 text-lg'>Ordenes</span>
@@ -112,8 +113,9 @@ export const Sidebar = () => {
             </Link>
 
             <Link
-              href='/'
+              href='/orders'
               className='flex items-center mt-5 p-2 hover:bg-gray-100 rounded transition-all'
+              onClick={() => closeSideMenu()}
             >
               <IoTicketOutline size={30} />
               <span className='ml-3 text-lg'>Ordenes</span>
