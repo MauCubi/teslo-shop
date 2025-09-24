@@ -2,7 +2,7 @@
 
 
 import { prisma } from '@/lib/prisma';
-import { Gender, Product, Size } from '@prisma/client';
+import { Gender, Product, Size } from '../../../generated/prisma';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { v2 as cloudinary } from 'cloudinary';
