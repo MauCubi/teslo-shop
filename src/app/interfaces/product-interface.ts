@@ -24,6 +24,11 @@ export interface CartProduct {
 
 }
 
+export interface ProductImage {
+    id: number;
+    url: string;
+    productId?: string;
+}
 
 export type ValidSizes = 'XS'|'S'|'M'|'L'|'XL'|'XXL'|'XXXL';
 export type ValidTypes = 'shirts'|'pants'|'hoodies'|'hats';

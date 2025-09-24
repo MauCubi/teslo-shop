@@ -11,12 +11,19 @@ interface Props {
 export const ProductGridItem = ({ product }: Props) => {
 
     const [displayImage, setDisplayImage] = useState( product.images[0] )
+    
 
   return (
     <div className='rounded-md overflow-hidden fade-in'>
         <Link href={ `/product/${product.slug}`}>
             <Image 
-                src={`/products/${ displayImage }`}
+                src={
+                    displayImage.includes('cloudinary') 
+                    ?
+                    displayImage
+                    :
+                    `/products/${ displayImage }`
+                }
                 alt={ product.title }
                 className='w-full object-cover rounded-md'
                 width={500}
